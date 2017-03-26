@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:gravity="right"
     android:orientation="vertical"
-    android:paddingBottom="5dp"
-    android:paddingRight="10dp"
+    android:paddingBottom="@dimen/spacing_micro"
+    android:paddingRight="@dimen/spacing_medium"
     android:paddingTop="5dp" >
 
     <TextView
         android:id="@+id/tv_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:padding="@dimen/spacing_micro"
         android:textColor="@color/lblFromName"
-        android:textSize="12dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:textStyle="italic" />
 
     <TextView
@@ -23,11 +23,11 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="80dp"
         android:background="@drawable/bg_msg_you"
-        android:paddingBottom="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="5dp"
+        android:paddingBottom="@dimen/spacing_micro"
+        android:paddingLeft="@dimen/spacing_medium"
+        android:paddingRight="@dimen/spacing_medium"
+        android:paddingTop="@dimen/spacing_micro"
         android:textColor="@color/white"
-        android:textSize="16dp" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
 </LinearLayout>

@@ -5,6 +5,10 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tile_bg">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -22,36 +26,23 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
     </android.support.design.widget.AppBarLayout>
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraint_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/tile_bg"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/messages"
-            android:layout_width="368dp"
-            android:layout_height="417dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/app_bar"
+            android:layout_above="@+id/cv_bottom_panel"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbars="vertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="8dp"
-            android:layout_marginTop="-50dp" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/cv_bottom_panel"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/messages"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:layout_editor_absoluteX="0dp">
+            android:layout_alignParentBottom="true">
 
             <LinearLayout android:id="@+id/ll_bottom_panel"
                 android:layout_width="match_parent"
@@ -90,7 +81,7 @@
 
 
 
-    </android.support.constraint.ConstraintLayout>
+    </RelativeLayout>
 
 
 

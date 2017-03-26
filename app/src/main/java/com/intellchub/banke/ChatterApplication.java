@@ -51,10 +51,6 @@ public class ChatterApplication extends Application {
                 .chatterModule(new ChatterModule())
                 .build();
 
-
-        // If a Dagger 2 component does not have any constructor arguments for any of its modules,
-        // then we can use .create() as a shortcut instead:
-        //  mNetComponent = com.codepath.dagger.components.NetComponent.create();
     }
 
     public NetComponent getNetComponent() {

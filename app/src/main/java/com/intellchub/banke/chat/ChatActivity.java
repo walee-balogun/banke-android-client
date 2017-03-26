@@ -20,16 +20,20 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.intellchub.banke.BuildConfig;
 import com.intellchub.banke.ChatterApplication;
 import com.intellchub.banke.R;
 import com.intellchub.banke.R2;
 import com.intellchub.banke.login.LoginActivity;
 import com.intellchub.banke.models.Message;
+import com.intellchub.banke.models.QuickReply;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +47,7 @@ import io.socket.emitter.Emitter;
  * Created by Adewale_MAC on 25/03/2017.
  */
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity implements QuickReplyAdapter.OnItemClickListener {
     private static final String TAG = ChatActivity.class.getSimpleName();
 
     private static final int REQUEST_LOGIN = 0;
@@ -63,7 +67,7 @@ public class ChatActivity extends AppCompatActivity {
     private boolean mTyping = false;
     private Handler mTypingHandler = new Handler();
     private String mUsername;
-    private Boolean isConnected = true;
+    private boolean isConnected = true;
     private Socket mSocket;
 
     public void onCreate(Bundle savedInstanceState){
@@ -78,9 +82,11 @@ public class ChatActivity extends AppCompatActivity {
         if(actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        //mMessagesView = (RecyclerView) findViewById(R.id.messages);
+        //startSignIn();
         mMessagesView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new MessageAdapter(this, mMessages);
+        mAdapter = new MessageAdapter(this, mMessages, this);
+        //mAdapter.setOnItemClickListener(this);
+
         mMessagesView.setAdapter(mAdapter);
         mInputMessageView = (EditText) findViewById(R.id.message_input);
         mInputMessageView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -177,13 +183,11 @@ public class ChatActivity extends AppCompatActivity {
         addLog(getResources().getQuantityString(R.plurals.message_participants, numUsers, numUsers));
     }
 
-    private void addMessage(String username, String message, boolean isSelf) {
-        if(isSelf){
-            mMessages.add(new Message.Builder(Message.TYPE_MESSAGE_FROM)
-                    .username(username).message(message).build());
+    private void addMessage(Message message) {
+        if(message.isSelf()){
+            mMessages.add(message);
         }else {
-            mMessages.add(new Message.Builder(Message.TYPE_MESSAGE_TO)
-                    .username(username).message(message).build());
+            mMessages.add(message);
         }
 
         mAdapter.notifyItemInserted(mMessages.size() - 1);
@@ -233,7 +237,14 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         mInputMessageView.setText("");
-        addMessage(mUsername, message, true);
+
+        addMessage(new Message.Builder(Message.TYPE_MESSAGE_FROM)
+                //.username(username)
+                .message(message)
+                //.quickReplies(quickReplies)
+                //.timestamp(data.getInt("timeStamp"))
+                .isSelf(true)
+                .build());
         JSONObject jsonObject = new JSONObject();
 
         try{
@@ -251,7 +262,12 @@ public class ChatActivity extends AppCompatActivity {
     private void startSignIn() {
         mUsername = null;
         Intent intent = new Intent(ChatActivity.this, LoginActivity.class);
-        startActivityForResult(intent, REQUEST_LOGIN);
+        //startActivityForResult(intent, REQUEST_LOGIN);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void leave() {
@@ -332,19 +348,35 @@ public class ChatActivity extends AppCompatActivity {
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
                     String username = "Banke.ai";
-                    String message;
+                    //String message;
+                    Message message;
                     Log.d(TAG, "-- Socket Message Data Object: "+data.toString());
                     try {
                         //username = data.getString("username");
 
-                        message = data.getString("botResponse");
-                    } catch (JSONException e) {
+                        //message = data.getString("botResponse");
+
+                        Gson gson = new Gson();
+                        Type collectionType = new TypeToken<List<QuickReply>>(){}.getType();
+                        Type typeToken = new TypeToken<Message>(){}.getType();
+                        List<QuickReply> quickReplies = gson.fromJson(data.get("quickReplies").toString(), collectionType);
+                        //message = gson.fromJson(data.toString(), typeToken);
+                        message = new Message.Builder(Message.TYPE_MESSAGE_TO)
+                                .username(username)
+                                .message(data.getString("botResponse"))
+                                .quickReplies(quickReplies)
+                                .timestamp(data.getInt("timeStamp"))
+                                .isSelf(false)
+                                .build();
+                    } catch (Exception e) {
                         Log.d(TAG, "Exception: "+e.getMessage());
                         return;
                     }
 
                     removeTyping(username);
-                    addMessage(username, message, false);
+
+
+                    addMessage(message);
                 }
             });
         }
@@ -445,4 +477,29 @@ public class ChatActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    public void onItemClick(View view, QuickReply quickReply) {
+        Log.d(TAG, "-- on Quick reply onItemClick --");
+        mInputMessageView.setText("");
+
+        addMessage(new Message.Builder(Message.TYPE_MESSAGE_FROM)
+                //.username(username)
+                .message(quickReply.getTitle())
+                //.quickReplies(quickReplies)
+                //.timestamp(data.getInt("timeStamp"))
+                .isSelf(true)
+                .build());
+        JSONObject jsonObject = new JSONObject();
+
+        try{
+
+            jsonObject.put("message", quickReply.getTitle());
+
+        }catch (JSONException e){
+            Log.d(TAG, "JSON Exception: "+e.getMessage());
+        }
+
+        Log.d(TAG, "jsonObject.toString(): "+jsonObject.toString());
+        mSocket.emit("talk", jsonObject);
+    }
 }
