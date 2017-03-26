@@ -99,7 +99,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             Log.d(TAG, "message.getMessage(): "+message.getMessage());
             holder.mUsernameView.setText(message.getUsername());
             holder.mMessageView.setText(message.getMessage());
-            Log.d(TAG, "mMessages.get(position).getmQuickReplies().get(0).getTitle(): "+mMessages.get(position).getQuickReplies().get(0).getTitle());
+            //Log.d(TAG, "mMessages.get(position).getmQuickReplies().get(0).getTitle(): "+mMessages.get(position).getQuickReplies().get(0).getTitle());
             if(message.isSelf()){
                 Log.d(TAG, "message.isSelf(): "+String.valueOf(message.isSelf()));
             }else {
@@ -107,7 +107,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
         Message message = mMessages.get(position);
-        Log.d(TAG, "mMessages.get(position).getmQuickReplies().get(0).getTitle(): "+mMessages.get(position).getQuickReplies().get(0).getTitle());
+        //Log.d(TAG, "mMessages.get(position).getmQuickReplies().get(0).getTitle(): "+mMessages.get(position).getQuickReplies().get(0).getTitle());
         if(message.isSelf()){
             Log.d(TAG, "message.isSelf(): "+String.valueOf(message.isSelf()));
         }else {
