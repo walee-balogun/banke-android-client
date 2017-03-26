@@ -32,8 +32,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private List<Message> mMessages;
     private int[] mUsernameColors;
 
-    public MessageAdapter(Context context, List<Message> messages, QuickReplyAdapter.OnItemClickListener setOnItemClickListener) {
+    public MessageAdapter(Context context, List<Message> messages, QuickReplyAdapter.OnItemClickListener onItemClickListener) {
         this.context = context;
+        this.onItemClickListener = onItemClickListener;
         mMessages = messages;
         mUsernameColors = context.getResources().getIntArray(R.array.username_colors);
     }
